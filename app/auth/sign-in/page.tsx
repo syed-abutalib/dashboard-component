@@ -1,19 +1,28 @@
 "use client";
-import Layout from "@/components/layout/Layout";
 import { DEVELOPMENT_API } from "@/components/common/Http";
 import { authStorage } from "@/lib/hooks/auth";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import Link from "next/link";
 
-export default function Home() {
+// Auth utility functions (could be moved to a separate file)
+
+export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const { token, user } = authStorage.getAuth();
+    if (token && user) {
+      // Optional: Validate token expiration here
+      router.push("/"); // Redirect to dashboard if already logged in
+    }
+  }, [router]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -74,16 +83,10 @@ export default function Home() {
 
       // Success - store auth data
       authStorage.setAuth(result);
-      if (result.user.role === "super_admin") {
-        router.push("/super-admin/dashboard");
-      }
-      if (result.user.role === "admin") {
-        router.push("/admin/dashboard");
-      }
-      if (result.user.role === "employees") {
-        router.push("/employee/dashboard");
-      }
       toast.success("Login successful");
+
+      // Redirect to dashboard or intended page
+      router.push("/");
     } catch (error) {
       toast.error("Server error, please try again.");
       console.error("Login error:", error);
@@ -250,12 +253,12 @@ export default function Home() {
                     Remember me
                   </label>
                 </div>
-                <Link
-                  href="/auth/forgot-password"
+                <a
+                  href="#"
                   className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
                 >
                   Forgot Password?
-                </Link>
+                </a>
               </div>
 
               <button

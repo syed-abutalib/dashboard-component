@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
+import ProgressBarProvider from "./providers/ProgressBarProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#081028]`}
       >
-        {children}
+        <ToastContainer
+          theme="dark"
+          autoClose={5000}
+          position="top-center"
+          closeButton={false}
+        />
+        <ProgressBarProvider>{children}</ProgressBarProvider>
       </body>
     </html>
   );
